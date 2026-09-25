@@ -1,0 +1,7 @@
+<tr id="<%= dom_id(sync_log) %>">
+  <td><%= sync_log.store.name %></td>
+  <td><%= sync_log.status %></td>
+  <td><%= sync_log.fetched_count %></td>
+  <td><%= sync_log.error_message %></td>
+  <td><%= sync_log.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
+</tr>

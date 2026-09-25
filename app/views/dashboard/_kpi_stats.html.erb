@@ -1,0 +1,5 @@
+<div id="kpi_stats">
+  <div>本日の総売上: <%= number_to_currency(today_total, unit: "¥", precision: 0, format: "%u%n") %></div>
+  <div>当月累計売上: <%= number_to_currency(month_total, unit: "¥", precision: 0, format: "%u%n") %></div>
+  <div>最新同期状態: <%= latest_sync_log&.status || "未同期" %></div>
+</div>
