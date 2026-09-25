@@ -16,10 +16,11 @@ services:
 
   web:
     build: .
+    image: ec-dashboard:latest
     command: ["bin/dev"]
     volumes:
       - .:/rails
-      - bundle_data:/usr/local/bundle
+      - node_modules_data:/rails/node_modules
     ports:
       - "${WEB_PORT:-3000}:3000"
     environment:
@@ -32,15 +33,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
     stdin_open: true
     tty: true
 
   worker:
-    build: .
+    image: ec-dashboard:latest
     command: ["bin/rails", "solid_queue:start"]
     volumes:
       - .:/rails
-      - bundle_data:/usr/local/bundle
     environment:
       RAILS_ENV: development
       DATABASE_HOST: db
@@ -49,9 +55,12 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
       DATABASE_NAME: ${DATABASE_NAME:-ec_dashboard_development}
     depends_on:
-      db:
+      # Wait for `web` to be healthy (not just started), since `web` is the one
+      # that runs db:prepare — starting `worker` any earlier races the initial
+      # schema load on a brand-new database.
+      web:
         condition: service_healthy
 
 volumes:
   mysql_data:
-  bundle_data:
+  node_modules_data:

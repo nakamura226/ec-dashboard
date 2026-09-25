@@ -1,0 +1,18 @@
+<div id="<%= dom_id(store) %>" class="card bg-base-100 shadow-sm border border-base-300">
+  <div class="card-body p-4 flex-row items-center justify-between">
+    <div>
+      <h3 class="card-title text-base"><%= store.name %></h3>
+      <p class="text-sm opacity-70"><%= store.platform.capitalize %></p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="badge <%= store_status_badge_class(store.status) %>"><%= store.status %></span>
+
+      <%= button_to "手動同期", sync_store_path(store),
+            method: :post,
+            class: "btn btn-sm btn-primary",
+            disabled: store.syncing?,
+            data: { turbo_submits_with: "同期中..." } %>
+    </div>
+  </div>
+</div>

@@ -12,11 +12,21 @@ class SyncEcDataJob < ApplicationJob
 
     sync_log = service_class.new(store).call
 
+    broadcast_store(store)
     broadcast_sync_log(sync_log)
     broadcast_kpis
   end
 
   private
+
+  def broadcast_store(store)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "dashboard",
+      target: ActionView::RecordIdentifier.dom_id(store),
+      partial: "stores/store",
+      locals: { store: store }
+    )
+  end
 
   def broadcast_sync_log(sync_log)
     Turbo::StreamsChannel.broadcast_append_to(

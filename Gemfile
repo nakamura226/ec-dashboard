@@ -27,6 +27,10 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapter for Active Job
 gem "solid_queue"
+# Use the database-backed adapter for Action Cable, so Turbo Stream broadcasts
+# from the SyncEcDataJob (running in a separate `worker` process) reach browsers
+# connected to the `web` process. The in-memory `async` adapter cannot cross processes.
+gem "solid_cable"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false

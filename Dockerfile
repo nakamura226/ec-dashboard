@@ -17,11 +17,22 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
+# Node.js is only needed to fetch the DaisyUI Tailwind plugin into node_modules;
+# the tailwindcss-rails standalone binary does the actual CSS build.
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+
 WORKDIR /rails
 
 # Install gems first so this layer is cached unless the Gemfile changes
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
+
+# Install DaisyUI (a Tailwind CSS plugin resolved via node_modules) separately
+# so this layer is cached unless package.json changes
+COPY package.json package-lock.json* ./
+RUN npm install
 
 # Copy the rest of the application
 COPY . .

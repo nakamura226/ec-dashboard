@@ -1,5 +1,22 @@
-<div id="kpi_stats">
-  <div>本日の総売上: <%= number_to_currency(today_total, unit: "¥", precision: 0, format: "%u%n") %></div>
-  <div>当月累計売上: <%= number_to_currency(month_total, unit: "¥", precision: 0, format: "%u%n") %></div>
-  <div>最新同期状態: <%= latest_sync_log&.status || "未同期" %></div>
+<div id="kpi_stats" class="stats stats-vertical lg:stats-horizontal shadow w-full bg-base-100">
+  <div class="stat">
+    <div class="stat-title">本日の総売上</div>
+    <div class="stat-value text-primary"><%= number_to_currency(today_total, unit: "¥", precision: 0, format: "%u%n") %></div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">当月累計売上</div>
+    <div class="stat-value text-secondary"><%= number_to_currency(month_total, unit: "¥", precision: 0, format: "%u%n") %></div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">最新同期状態</div>
+    <div class="stat-value text-lg">
+      <% if latest_sync_log %>
+        <span class="badge badge-lg <%= sync_log_status_badge_class(latest_sync_log.status) %>"><%= latest_sync_log.status %></span>
+      <% else %>
+        <span class="badge badge-lg badge-ghost">未同期</span>
+      <% end %>
+    </div>
+  </div>
 </div>

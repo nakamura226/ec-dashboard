@@ -1,6 +1,10 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
+# If running the rails server then create or migrate existing database.
+# (Only the `web` container does this — `worker` waits for `web` to become
+# healthy before starting, via docker-compose's depends_on condition, since
+# running `db:prepare` from two containers at once on a brand-new database
+# races on the initial schema load.)
 if [ "${@: -1:1}" == "server" ] || [ "${@: -1:1}" == "bin/dev" ]; then
   ./bin/rails db:prepare
 fi

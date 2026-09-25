@@ -1,0 +1,42 @@
+<% content_for :title, "ダッシュボード" %>
+
+<%= turbo_stream_from "dashboard" %>
+
+<div class="min-h-screen bg-base-200">
+  <div class="navbar bg-base-100 shadow-sm px-6">
+    <div class="flex-1">
+      <span class="text-lg font-bold">EC Multi-Channel Dashboard</span>
+    </div>
+  </div>
+
+  <main class="max-w-6xl mx-auto p-6 space-y-8">
+    <%= render "dashboard/kpi_stats", today_total: @today_total, month_total: @month_total, latest_sync_log: @latest_sync_log %>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4">連携ストア</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <%= render @stores %>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4">同期履歴</h2>
+      <div class="overflow-x-auto bg-base-100 rounded-box shadow-sm">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>ストア</th>
+              <th>ステータス</th>
+              <th>取得件数</th>
+              <th>エラー内容</th>
+              <th>日時</th>
+            </tr>
+          </thead>
+          <tbody id="sync_logs">
+            <%= render @sync_logs %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

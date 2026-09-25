@@ -1,8 +1,18 @@
+# Solid Cable is used in every environment (not just production) because the
+# `web` and `worker` Docker containers are separate processes: only a shared,
+# database-backed pub/sub backend lets a broadcast from a background job
+# (running in `worker`) reach browsers connected to `web`.
 development:
-  adapter: async
+  adapter: solid_cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day
 
 test:
   adapter: test
 
 production:
-  adapter: async
+  adapter: solid_cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day
+  writer_batch_size: 4
+  writer_batch_delay: 0.001.seconds

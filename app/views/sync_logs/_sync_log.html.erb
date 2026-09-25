@@ -1,7 +1,7 @@
 <tr id="<%= dom_id(sync_log) %>">
   <td><%= sync_log.store.name %></td>
-  <td><%= sync_log.status %></td>
+  <td><span class="badge <%= sync_log_status_badge_class(sync_log.status) %>"><%= sync_log.status %></span></td>
   <td><%= sync_log.fetched_count %></td>
-  <td><%= sync_log.error_message %></td>
-  <td><%= sync_log.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
+  <td class="text-sm opacity-70"><%= sync_log.error_message %></td>
+  <td class="text-sm opacity-70"><%= sync_log.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
 </tr>
