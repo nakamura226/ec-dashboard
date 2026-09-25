@@ -1,0 +1,57 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD:-password}
+      MYSQL_DATABASE: ${DATABASE_NAME:-ec_dashboard_development}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DATABASE_PASSWORD:-password}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    command: ["bin/dev"]
+    volumes:
+      - .:/rails
+      - bundle_data:/usr/local/bundle
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_NAME: ${DATABASE_NAME:-ec_dashboard_development}
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  worker:
+    build: .
+    command: ["bin/rails", "solid_queue:start"]
+    volumes:
+      - .:/rails
+      - bundle_data:/usr/local/bundle
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_NAME: ${DATABASE_NAME:-ec_dashboard_development}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  bundle_data:
